@@ -1,0 +1,201 @@
+---
+title: "Practical Machine Learning"
+author: "rtorlow"
+date: "`r Sys.Date()`"
+output:
+  knitr:::html_vignette:
+    toc: yes
+    number_sections: yes
+    css: docstyle.css
+---
+
+```{r prep, include = TRUE, eval=FALSE}
+
+# load necessary R packages
+library("knitr")
+library("dplyr")
+library("data.table")
+library("caret")
+
+# set seed
+set.seed(5580)
+
+# global options (can only be used after knitr was loaded)
+opts_chunk$set(fig.align = "center", echo = FALSE,
+               fig.retina = 10)
+
+```
+
+```{r setup, include = FALSE}
+# load data
+  load("08_assignment.rdata")
+
+```
+
+***
+# Background
+
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset)
+
+
+***
+# Data input 
+
+```{r,  eval=FALSE, echo=TRUE}
+# raw data
+
+Data <- as.data.frame(
+  data.table::fread("pml-training.csv",
+                    na.strings=c("NA", "", "#DIV/0!"),
+                    strip.white=T, stringsAsFactors = TRUE))
+```
+
+```{r,  echo=TRUE}
+dim(Data)
+```
+
+```{r,  eval=FALSE, echo=TRUE}
+#  testing data for submission
+
+TestingOrg <- as.data.frame(data.table::fread("pml-testing.csv", 
+                  na.strings=c("NA", "", "#DIV/0!"), 
+                  strip.white=T, 
+                  stringsAsFactors = TRUE))
+```
+
+```{r,  echo=TRUE}
+dim(TestingOrg)
+```
+***
+# Data cleaning
+
+```{r,eval=FALSE,  echo=TRUE}
+#160 potential variables 
+names(Data)
+
+# remove irrelevant variables
+# time stamps, username etc.
+Data <- select(Data, -contains("timestamp"), -V1, -user_name, -contains("window"))
+
+# lets find out the rate of missingness
+isNA <- apply(Data, 2, function(x) { sum(is.na(x)) / nrow(Data) })
+```
+
+```{r, results='asis', echo=FALSE}
+
+print(xtable::xtable(table(isNA)), 
+      type = "html",include.rownames=TRUE)
+```
+
+```{r,eval=FALSE,  echo=TRUE}
+
+# use only 53 variables which have no NA's (or any plausible rate of missingness)
+Data <- Data[ , names(isNA[isNA==0])]
+```
+```{r,  echo=TRUE}
+dim(Data)
+```
+
+```{r,eval=FALSE,  echo=TRUE}
+# split into training and test data set
+inTrain <- createDataPartition(Data$classe, p = 0.7, list = FALSE)
+training <- Data[inTrain,]
+testing <- Data[-inTrain,]
+```
+
+```{r,  echo=TRUE}
+dim(training)
+dim(testing)
+```
+***
+# Train a random forest
+
+Idea: Random forests are usually one of the two top performing algorithms (along with boosting). Random forests build lots of trees, and then average them to reduce the variance (Bagging: Bootstrap aggregating).
+
+```{r,eval=FALSE,  echo=TRUE}
+# get you a coffee... it takes time
+model <- train(classe ~ ., data = training, model="rf", trControl=ctrl)
+pred <- predict(model, newdata = testing)
+```
+
+
+## Out-of-sample-error
+```{r,  echo=TRUE}
+sum(pred == testing$classe) / length(pred) 
+# 98% of the test data set is predicted right
+
+# the out-of-sample-error is:
+1 - sum(pred == testing$classe) / length(pred) 
+```
+
+```{r,eval=FALSE,  echo=TRUE}
+# we can table which classe is predicted right / wrong
+confusionMatrix(testing$classe, pred)$table
+```
+```{r,  echo=F}
+print(a)
+```
+
+***
+## Which variables are most important in this model?
+```{r,eval=FALSE,  echo=TRUE}
+top10 <- varImp(model)$importance
+top10 <- mutate(top10, vars = row.names(top10)) %>%
+  arrange(desc(Overall))
+
+top10 <- top10$vars[1:10]
+```
+```{r,  echo=TRUE}
+top10
+```
+
+***
+# Train a smaller random forest
+
+```{r,eval=FALSE,  echo=TRUE}
+
+smallData   <- training[, c( "classe", top10)]
+smallModel  <- train(classe ~ ., data = smallData, model = "rf", trControl=ctrl)
+smallPred   <- predict(smallModel, newdata = testing)
+```
+
+## Out-of-sample-error (small tree)
+```{r,  echo=TRUE}
+
+sum(smallPred == testing$classe) / length(smallPred)
+
+# Out-of-sample-error for model with 10 variables
+1- sum(smallPred == testing$classe) / length(smallPred)
+```
+
+```{r,eval=FALSE,  echo=TRUE}
+# Finally, let's check which classe is predicted right / wrong
+confusionMatrix(testing$classe, smallPred)$table
+```
+```{r,  echo=F}
+b
+```
+
+***
+# Prediction for submission
+```{r,eval=FALSE,  echo=TRUE}
+answers = rep("A", 20)
+
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
+
+predict(model, newdata=TestingOrg) # use the orignal model
+answers <- predict(model, TestingOrg)
+
+pml_write_files(answers)
+```
+
+```{r,  echo=TRUE}
+answers
+```
+

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="rtorlow" />
+
+<meta name="date" content="2015-11-22" />
+
+<title>Practical Machine Learning</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<link href="data:text/css,body%2C%20td%20%7B%0Afont%2Dfamily%3A%20sans%2Dserif%3B%0Abackground%2Dcolor%3A%20white%3B%0Afont%2Dsize%3A%2010pt%3B%0Acolor%3A%20black%0A%7D%0Abody%20%7B%0Amax%2Dwidth%3A%20800px%3B%0Amargin%3A%20auto%3B%0Apadding%3A%201em%3B%0Aline%2Dheight%3A%2020px%3B%0Amargin%2Dleft%3A325px%3B%0A%7D%0Att%2C%20code%2C%20pre%20%7B%0Afont%2Dfamily%3A%20%27DejaVu%20Sans%20Mono%27%2C%20%27Droid%20Sans%20Mono%27%2C%20%27Lucida%20Console%27%2C%20Consolas%2C%20Monaco%2C%20monospace%3B%0A%7D%0Ah1%20%7B%0Afont%2Dsize%3A%2014pt%3B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Ah2%20%7B%0Afont%2Dsize%3A%2011pt%3B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Ah3%20%7B%0Afont%2Dsize%3A%2010pt%3B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Ah4%20%7B%0Afont%2Dsize%3A10pt%3B%0A%7D%0Ah5%20%7B%0Afont%2Dsize%3A10pt%3B%0A%7D%0Ah6%20%7B%0Afont%2Dsize%3A10pt%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20rgb%280%2C%2065%2C%20134%29%3B%0A%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20rgb%28233%2C%2094%2C%2015%29%3B%0A%7D%0Apre%2C%20img%20%7B%0Amax%2Dwidth%3A%20100%25%3B%0A%7D%0Acode%2C%20pre%20%7B%0Aborder%2Dradius%3A%200%2E5px%3B%0Abackground%2Dcolor%3A%20%23F8F8F8%3B%0Acolor%3A%20inherit%3B%0A%7D%0Acode%20%7B%0Aborder%3A%201px%20solid%20%23EAEAEA%3B%0Amargin%3A%200%202px%3B%0Apadding%3A%200%202px%3B%0A%7D%0Apre%20%7B%0Aborder%3A%20none%3B%0Aline%2Dheight%3A%201%2E25em%3B%0Aoverflow%3A%20auto%3B%0Apadding%3A%200px%202px%3B%0A%7D%0Apre%20%3E%20code%20%7B%0Aborder%3A%200%3B%0Amargin%3A%200%3B%0Apadding%3A%200%3B%0A%7D%0Acode%5Bclass%5D%20%7B%0Abackground%2Dcolor%3A%20%23F8F8F8%3B%0A%7D%0Atable%2C%20td%2C%20th%20%7B%0A%20%20border%3A%20solid%3B%0A%20%20border%2Dcolor%3A%20%23ABABCC%3B%0A%20%20border%2Dtop%2Dwidth%3A%200px%3B%20%0A%20%20border%2Dbottom%2Dwidth%3A%201px%3B%0A%20%20border%2Dright%2Dwidth%3A%200px%3B%0A%20%20border%2Dleft%2Dwidth%3A%200px%3B%20%0A%20%20padding%3A%205px%3B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%7D%0Acaption%20%7B%0Adisplay%3A%20table%2Dcaption%3B%0Atext%2Dalign%3A%20left%3B%0Acolor%3A%20black%3B%0Afont%2Dsize%3A%209pt%3B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Ablockquote%20%7B%0Acolor%3A%23666666%3B%0Amargin%3A0%3B%0Apadding%2Dleft%3A%201em%3B%0Aborder%2Dleft%3A%200%2E5em%20%23EEE%20solid%3B%0A%7D%0Ahr%20%7B%0Aheight%3A%200px%3B%0Aborder%2Dbottom%3A%20none%3B%0Aborder%2Dtop%2Dwidth%3A%20thin%3B%0Aborder%2Dtop%2Dstyle%3A%20dotted%3B%0Aborder%2Dtop%2Dcolor%3A%20%23999999%3B%0A%7D%0A%23TOC%20%7B%0Aposition%3A%20fixed%3B%0Aleft%3A%200%3B%0Atop%3A%2040px%3B%0Awidth%3A%20325px%3B%0Aheight%3A%20100%25%3B%0Aoverflow%3Aauto%3B%0A%7D%0A%40media%20print%20%7B%0A%2A%20%7B%0Abackground%3A%20transparent%20%21important%3B%0Acolor%3A%20black%20%21important%3B%0Afilter%3Anone%20%21important%3B%0A%2Dms%2Dfilter%3A%20none%20%21important%3B%0A%7D%0Abody%20%7B%0Afont%2Dsize%3A12pt%3B%0Amax%2Dwidth%3A100%25%3B%0A%7D%0Aa%2C%20a%3Avisited%20%7B%0Atext%2Ddecoration%3A%20underline%3B%0A%7D%0Ahr%20%7B%0Avisibility%3A%20hidden%3B%0Apage%2Dbreak%2Dbefore%3A%20always%3B%0A%7D%0Apre%2C%20blockquote%20%7B%0Apadding%2Dright%3A%201em%3B%0Apage%2Dbreak%2Dinside%3A%20avoid%3B%0A%7D%0Atr%2C%20img%20%7B%0Apage%2Dbreak%2Dinside%3A%20avoid%3B%0A%7D%0Aimg%20%7B%0Amax%2Dwidth%3A%20100%25%20%21important%3B%0A%7D%0A%40page%20%3Aleft%20%7B%0Amargin%3A%2015mm%2020mm%2015mm%2010mm%3B%0A%7D%0A%40page%20%3Aright%20%7B%0Amargin%3A%2015mm%2010mm%2015mm%2020mm%3B%0A%7D%0Ap%2C%20h2%2C%20h3%20%7B%0Aorphans%3A%203%3B%20widows%3A%203%3B%0A%7D%0Ah2%2C%20h3%20%7B%0Apage%2Dbreak%2Dafter%3A%20avoid%3B%0A%7D%0A%7D" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div id="header">
+<h1 class="title">Practical Machine Learning</h1>
+<h4 class="author"><em>rtorlow</em></h4>
+<h4 class="date"><em>2015-11-22</em></h4>
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#background"><span class="toc-section-number">1</span> Background</a></li>
+<li><a href="#data-input"><span class="toc-section-number">2</span> Data input</a></li>
+<li><a href="#data-cleaning"><span class="toc-section-number">3</span> Data cleaning</a></li>
+<li><a href="#train-a-random-forest"><span class="toc-section-number">4</span> Train a random forest</a><ul>
+<li><a href="#out-of-sample-error"><span class="toc-section-number">4.1</span> Out-of-sample-error</a></li>
+<li><a href="#which-variables-are-most-important-in-this-model"><span class="toc-section-number">4.2</span> Which variables are most important in this model?</a></li>
+</ul></li>
+<li><a href="#train-a-smaller-random-forest"><span class="toc-section-number">5</span> Train a smaller random forest</a><ul>
+<li><a href="#out-of-sample-error-small-tree"><span class="toc-section-number">5.1</span> Out-of-sample-error (small tree)</a></li>
+</ul></li>
+<li><a href="#prediction-for-submission"><span class="toc-section-number">6</span> Prediction for submission</a></li>
+</ul>
+</div>
+
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load necessary R packages</span>
+<span class="kw">library</span>(<span class="st">&quot;knitr&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;dplyr&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;data.table&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;caret&quot;</span>)
+
+<span class="co"># set seed</span>
+<span class="kw">set.seed</span>(<span class="dv">5580</span>)
+
+<span class="co"># global options (can only be used after knitr was loaded)</span>
+opts_chunk$<span class="kw">set</span>(<span class="dt">fig.align =</span> <span class="st">&quot;center&quot;</span>, <span class="dt">echo =</span> <span class="ot">FALSE</span>,
+               <span class="dt">fig.retina =</span> <span class="dv">10</span>)</code></pre>
+<hr />
+<div id="background" class="section level1">
+<h1><span class="header-section-number">1</span> Background</h1>
+<p>Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: <a href="http://groupware.les.inf.puc-rio.br/har" class="uri">http://groupware.les.inf.puc-rio.br/har</a> (see the section on the Weight Lifting Exercise Dataset)</p>
+<hr />
+</div>
+<div id="data-input" class="section level1">
+<h1><span class="header-section-number">2</span> Data input</h1>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># raw data</span>
+
+Data &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(
+  data.table::<span class="kw">fread</span>(<span class="st">&quot;pml-training.csv&quot;</span>,
+                    <span class="dt">na.strings=</span><span class="kw">c</span>(<span class="st">&quot;NA&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="st">&quot;#DIV/0!&quot;</span>),
+                    <span class="dt">strip.white=</span>T, <span class="dt">stringsAsFactors =</span> <span class="ot">TRUE</span>))</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(Data)</code></pre>
+<pre><code>## [1] 19622    53</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#  testing data for submission</span>
+
+TestingOrg &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(data.table::<span class="kw">fread</span>(<span class="st">&quot;pml-testing.csv&quot;</span>, 
+                  <span class="dt">na.strings=</span><span class="kw">c</span>(<span class="st">&quot;NA&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="st">&quot;#DIV/0!&quot;</span>), 
+                  <span class="dt">strip.white=</span>T, 
+                  <span class="dt">stringsAsFactors =</span> <span class="ot">TRUE</span>))</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(TestingOrg)</code></pre>
+<pre><code>## [1]  20 160</code></pre>
+<hr />
+</div>
+<div id="data-cleaning" class="section level1">
+<h1><span class="header-section-number">3</span> Data cleaning</h1>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#160 potential variables </span>
+<span class="kw">names</span>(Data)
+
+<span class="co"># remove irrelevant variables</span>
+<span class="co"># time stamps, username etc.</span>
+Data &lt;-<span class="st"> </span><span class="kw">select</span>(Data, -<span class="kw">contains</span>(<span class="st">&quot;timestamp&quot;</span>), -V1, -user_name, -<span class="kw">contains</span>(<span class="st">&quot;window&quot;</span>))
+
+<span class="co"># lets find out the rate of missingness</span>
+isNA &lt;-<span class="st"> </span><span class="kw">apply</span>(Data, <span class="dv">2</span>, function(x) { <span class="kw">sum</span>(<span class="kw">is.na</span>(x)) /<span class="st"> </span><span class="kw">nrow</span>(Data) })</code></pre>
+<!-- html table generated in R 3.2.2 by xtable 1.7-4 package -->
+<!-- Sun Nov 22 16:48:09 2015 -->
+<table border="1">
+<tr>
+<th>
+</th>
+<th>
+isNA
+</th>
+</tr>
+<tr>
+<td align="right">
+0
+</td>
+<td align="right">
+53
+</td>
+</tr>
+<tr>
+<td align="right">
+0.979308938946081
+</td>
+<td align="right">
+67
+</td>
+</tr>
+<tr>
+<td align="right">
+0.979359902150647
+</td>
+<td align="right">
+1
+</td>
+</tr>
+<tr>
+<td align="right">
+0.979410865355213
+</td>
+<td align="right">
+1
+</td>
+</tr>
+<tr>
+<td align="right">
+0.979512791764346
+</td>
+<td align="right">
+1
+</td>
+</tr>
+<tr>
+<td align="right">
+0.979563754968912
+</td>
+<td align="right">
+4
+</td>
+</tr>
+<tr>
+<td align="right">
+0.979767607787178
+</td>
+<td align="right">
+1
+</td>
+</tr>
+<tr>
+<td align="right">
+0.979818570991744
+</td>
+<td align="right">
+4
+</td>
+</tr>
+<tr>
+<td align="right">
+0.97986953419631
+</td>
+<td align="right">
+2
+</td>
+</tr>
+<tr>
+<td align="right">
+0.980939761492203
+</td>
+<td align="right">
+2
+</td>
+</tr>
+<tr>
+<td align="right">
+0.983233105697686
+</td>
+<td align="right">
+1
+</td>
+</tr>
+<tr>
+<td align="right">
+0.983284068902253
+</td>
+<td align="right">
+1
+</td>
+</tr>
+<tr>
+<td align="right">
+0.983385995311385
+</td>
+<td align="right">
+2
+</td>
+</tr>
+<tr>
+<td align="right">
+0.983538884925084
+</td>
+<td align="right">
+1
+</td>
+</tr>
+<tr>
+<td align="right">
+0.98358984812965
+</td>
+<td align="right">
+4
+</td>
+</tr>
+<tr>
+<td align="right">
+0.983640811334217
+</td>
+<td align="right">
+2
+</td>
+</tr>
+<tr>
+<td align="right">
+1
+</td>
+<td align="right">
+6
+</td>
+</tr>
+</table>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># use only 53 variables which have no NA's (or any plausible rate of missingness)</span>
+Data &lt;-<span class="st"> </span>Data[ , <span class="kw">names</span>(isNA[isNA==<span class="dv">0</span>])]</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(Data)</code></pre>
+<pre><code>## [1] 19622    53</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># split into training and test data set</span>
+inTrain &lt;-<span class="st"> </span><span class="kw">createDataPartition</span>(Data$classe, <span class="dt">p =</span> <span class="fl">0.7</span>, <span class="dt">list =</span> <span class="ot">FALSE</span>)
+training &lt;-<span class="st"> </span>Data[inTrain,]
+testing &lt;-<span class="st"> </span>Data[-inTrain,]</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(training)</code></pre>
+<pre><code>## [1] 13737    53</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(testing)</code></pre>
+<pre><code>## [1] 5885   53</code></pre>
+<hr />
+</div>
+<div id="train-a-random-forest" class="section level1">
+<h1><span class="header-section-number">4</span> Train a random forest</h1>
+<p>Idea: Random forests are usually one of the two top performing algorithms (along with boosting). Random forests build lots of trees, and then average them to reduce the variance (Bagging: Bootstrap aggregating).</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># get you a coffee... it takes time</span>
+model &lt;-<span class="st"> </span><span class="kw">train</span>(classe ~<span class="st"> </span>., <span class="dt">data =</span> training, <span class="dt">model=</span><span class="st">&quot;rf&quot;</span>, <span class="dt">trControl=</span>ctrl)
+pred &lt;-<span class="st"> </span><span class="kw">predict</span>(model, <span class="dt">newdata =</span> testing)</code></pre>
+<div id="out-of-sample-error" class="section level2">
+<h2><span class="header-section-number">4.1</span> Out-of-sample-error</h2>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(pred ==<span class="st"> </span>testing$classe) /<span class="st"> </span><span class="kw">length</span>(pred) </code></pre>
+<pre><code>## [1] 0.9898046</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 98% of the test data set is predicted right</span>
+
+<span class="co"># the out-of-sample-error is:</span>
+<span class="dv">1</span> -<span class="st"> </span><span class="kw">sum</span>(pred ==<span class="st"> </span>testing$classe) /<span class="st"> </span><span class="kw">length</span>(pred) </code></pre>
+<pre><code>## [1] 0.01019541</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># we can table which classe is predicted right / wrong</span>
+<span class="kw">confusionMatrix</span>(testing$classe, pred)$table</code></pre>
+<pre><code>##           Reference
+## Prediction    A    B    C    D    E
+##          A 1671    3    0    0    0
+##          B   12 1122    5    0    0
+##          C    0    4 1019    3    0
+##          D    0    1   18  943    2
+##          E    1    1    3    7 1070</code></pre>
+<hr />
+</div>
+<div id="which-variables-are-most-important-in-this-model" class="section level2">
+<h2><span class="header-section-number">4.2</span> Which variables are most important in this model?</h2>
+<pre class="sourceCode r"><code class="sourceCode r">top10 &lt;-<span class="st"> </span><span class="kw">varImp</span>(model)$importance
+top10 &lt;-<span class="st"> </span><span class="kw">mutate</span>(top10, <span class="dt">vars =</span> <span class="kw">row.names</span>(top10)) %&gt;%
+<span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(Overall))
+
+top10 &lt;-<span class="st"> </span>top10$vars[<span class="dv">1</span>:<span class="dv">10</span>]</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">top10</code></pre>
+<pre><code>##  [1] &quot;roll_belt&quot;         &quot;pitch_forearm&quot;     &quot;yaw_belt&quot;         
+##  [4] &quot;pitch_belt&quot;        &quot;magnet_dumbbell_z&quot; &quot;magnet_dumbbell_y&quot;
+##  [7] &quot;roll_forearm&quot;      &quot;accel_dumbbell_y&quot;  &quot;roll_dumbbell&quot;    
+## [10] &quot;magnet_dumbbell_x&quot;</code></pre>
+<hr />
+</div>
+</div>
+<div id="train-a-smaller-random-forest" class="section level1">
+<h1><span class="header-section-number">5</span> Train a smaller random forest</h1>
+<pre class="sourceCode r"><code class="sourceCode r">smallData   &lt;-<span class="st"> </span>training[, <span class="kw">c</span>( <span class="st">&quot;classe&quot;</span>, top10)]
+smallModel  &lt;-<span class="st"> </span><span class="kw">train</span>(classe ~<span class="st"> </span>., <span class="dt">data =</span> smallData, <span class="dt">model =</span> <span class="st">&quot;rf&quot;</span>, <span class="dt">trControl=</span>ctrl)
+smallPred   &lt;-<span class="st"> </span><span class="kw">predict</span>(smallModel, <span class="dt">newdata =</span> testing)</code></pre>
+<div id="out-of-sample-error-small-tree" class="section level2">
+<h2><span class="header-section-number">5.1</span> Out-of-sample-error (small tree)</h2>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(smallPred ==<span class="st"> </span>testing$classe) /<span class="st"> </span><span class="kw">length</span>(smallPred)</code></pre>
+<pre><code>## [1] 0.9826678</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Out-of-sample-error for model with 10 variables</span>
+<span class="dv">1</span>-<span class="st"> </span><span class="kw">sum</span>(smallPred ==<span class="st"> </span>testing$classe) /<span class="st"> </span><span class="kw">length</span>(smallPred)</code></pre>
+<pre><code>## [1] 0.0173322</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Finally, let's check which classe is predicted right / wrong</span>
+<span class="kw">confusionMatrix</span>(testing$classe, smallPred)$table</code></pre>
+<pre><code>##           Reference
+## Prediction    A    B    C    D    E
+##          A 1656    8    9    1    0
+##          B   19 1096   19    5    0
+##          C    2    8 1013    3    0
+##          D    0    1   12  950    1
+##          E    0    4    3    7 1068</code></pre>
+<hr />
+</div>
+</div>
+<div id="prediction-for-submission" class="section level1">
+<h1><span class="header-section-number">6</span> Prediction for submission</h1>
+<pre class="sourceCode r"><code class="sourceCode r">answers =<span class="st"> </span><span class="kw">rep</span>(<span class="st">&quot;A&quot;</span>, <span class="dv">20</span>)
+
+pml_write_files =<span class="st"> </span>function(x){
+  n =<span class="st"> </span><span class="kw">length</span>(x)
+  for(i in <span class="dv">1</span>:n){
+    filename =<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;problem_id_&quot;</span>,i,<span class="st">&quot;.txt&quot;</span>)
+    <span class="kw">write.table</span>(x[i],<span class="dt">file=</span>filename,<span class="dt">quote=</span><span class="ot">FALSE</span>,<span class="dt">row.names=</span><span class="ot">FALSE</span>,<span class="dt">col.names=</span><span class="ot">FALSE</span>)
+  }
+}
+
+
+
+<span class="kw">predict</span>(model, <span class="dt">newdata=</span>TestingOrg)
+answers &lt;-<span class="st"> </span><span class="kw">predict</span>(model, TestingOrg)
+
+<span class="kw">pml_write_files</span>(answers)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">answers</code></pre>
+<pre><code>##  [1] B A B A A E D B A A B C B A E E A B B B
+## Levels: A B C D E</code></pre>
+</div>
+
+<script type="text/javascript">
+window.onload = function() {
+  var i, fig = 1, caps = document.getElementsByClassName('caption');
+  for (i = 0; i < caps.length; i++) {
+    var cap = caps[i];
+    if (cap.parentElement.className !== 'figure' || cap.nodeName !== 'P')
+      continue;
+    cap.innerHTML = '<span>Figure ' + fig + ':</span> ' + cap.innerHTML;
+    fig++;
+  }
+  fig = 1;
+  caps = document.getElementsByTagName('caption');
+  for (i = 0; i < caps.length; i++) {
+    var cap = caps[i];
+    if (cap.parentElement.nodeName !== 'TABLE') continue;
+    cap.innerHTML = '<span>Table ' + fig + ':</span> ' + cap.innerHTML;
+    fig++;
+  }
+}
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

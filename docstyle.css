@@ -1,0 +1,149 @@
+body, td {
+font-family: sans-serif;
+background-color: white;
+font-size: 10pt;
+color: black
+}
+body {
+max-width: 800px;
+margin: auto;
+padding: 1em;
+line-height: 20px;
+margin-left:325px;
+}
+tt, code, pre {
+font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+h1 {
+font-size: 14pt;
+font-weight: bold;
+}
+h2 {
+font-size: 11pt;
+font-weight: bold;
+}
+h3 {
+font-size: 10pt;
+font-weight: bold;
+}
+h4 {
+font-size:10pt;
+}
+h5 {
+font-size:10pt;
+}
+h6 {
+font-size:10pt;
+}
+a {
+color: rgb(0, 65, 134);
+}
+a:visited {
+color: rgb(233, 94, 15);
+}
+pre, img {
+max-width: 100%;
+}
+code, pre {
+border-radius: 0.5px;
+background-color: #F8F8F8;
+color: inherit;
+}
+code {
+border: 1px solid #EAEAEA;
+margin: 0 2px;
+padding: 0 2px;
+}
+pre {
+border: none;
+line-height: 1.25em;
+overflow: auto;
+padding: 0px 2px;
+}
+pre > code {
+border: 0;
+margin: 0;
+padding: 0;
+}
+code[class] {
+background-color: #F8F8F8;
+}
+table, td, th {
+  border: solid;
+  border-color: #ABABCC;
+  border-top-width: 0px; 
+  border-bottom-width: 1px;
+  border-right-width: 0px;
+  border-left-width: 0px; 
+  padding: 5px;
+  border-collapse: collapse;
+}
+caption {
+display: table-caption;
+text-align: left;
+color: black;
+font-size: 9pt;
+font-weight: bold;
+}
+blockquote {
+color:#666666;
+margin:0;
+padding-left: 1em;
+border-left: 0.5em #EEE solid;
+}
+hr {
+height: 0px;
+border-bottom: none;
+border-top-width: thin;
+border-top-style: dotted;
+border-top-color: #999999;
+}
+#TOC {
+position: fixed;
+left: 0;
+top: 40px;
+width: 325px;
+height: 100%;
+overflow:auto;
+}
+@media print {
+* {
+background: transparent !important;
+color: black !important;
+filter:none !important;
+-ms-filter: none !important;
+}
+body {
+font-size:12pt;
+max-width:100%;
+}
+a, a:visited {
+text-decoration: underline;
+}
+hr {
+visibility: hidden;
+page-break-before: always;
+}
+pre, blockquote {
+padding-right: 1em;
+page-break-inside: avoid;
+}
+tr, img {
+page-break-inside: avoid;
+}
+img {
+max-width: 100% !important;
+}
+@page :left {
+margin: 15mm 20mm 15mm 10mm;
+}
+@page :right {
+margin: 15mm 10mm 15mm 20mm;
+}
+p, h2, h3 {
+orphans: 3; widows: 3;
+}
+h2, h3 {
+page-break-after: avoid;
+}
+}
